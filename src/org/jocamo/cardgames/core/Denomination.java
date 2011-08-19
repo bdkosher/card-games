@@ -11,20 +11,36 @@ public enum Denomination {
     private final Integer value;
     private final boolean royalty;
 
-    Denomination(Integer value) {
+    /**
+     * Creates a non-royalty denomination of the given ordinal value.
+     * 
+     * @param value 
+     */
+    Denomination(int value) {
         this(value, false);
     }
 
+    /**
+     * Creates a denomination of the given ordinal value and royalty.
+     * 
+     * @param value
+     * @param royalty 
+     */
     Denomination(Integer value, boolean royalty) {
         this.value = value;
         this.royalty = royalty;
     }
 
+    /**
+     * Returns true if this denomination is royalty.
+     * 
+     * @return 
+     */
     public boolean isRoyalty() {
         return royalty;
     }
 
-    public Integer getValue() {
+    public int getValue() {
         return value;
     }
 

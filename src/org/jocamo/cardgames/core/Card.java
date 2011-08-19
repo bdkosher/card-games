@@ -11,6 +11,13 @@ public class Card {
     
     private final Denomination denomination;
 
+    /**
+     * Creates a new card of the given suit and denomination.
+     * TODO what about Jokers?
+     * 
+     * @param suit - cannot be null
+     * @param denomination - cannot be null
+     */
     public Card(Suit suit, Denomination denomination) {
         if (suit == null) {
             throw new NullPointerException("Suit arg cannot be null.");
@@ -22,19 +29,40 @@ public class Card {
         this.denomination = denomination;
     }
 
+    /**
+     * Returns the Card's suit.
+     * 
+     * @return 
+     */
     public Suit getSuit() {
         return suit;
     }
 
+    /**
+     * Returns the Card's denomination.
+     * 
+     * @return 
+     */
     public Denomination getDenomination() {
         return denomination;
     }
     
+    /**
+     * Returns the full name of the card according to its denomination and suit.
+     * 
+     * @return 
+     */
     @Override
     public String toString() {
         return denomination + " of " + suit;
     }
 
+    /**
+     * IDE-generated. Based off the suit and denomination.
+     * 
+     * @param obj
+     * @return 
+     */
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -53,6 +81,11 @@ public class Card {
         return true;
     }
 
+    /**
+     * IDE-generated. Based off the suit and denomination.
+     * 
+     * @return 
+     */
     @Override
     public int hashCode() {
         int hash = 7;
