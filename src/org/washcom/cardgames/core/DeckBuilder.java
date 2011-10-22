@@ -8,7 +8,7 @@ import java.util.Collection;
  * 
  * @author Joe
  */
-public class DeckBuilder {
+public final class DeckBuilder {
 
     /**
      * Do not instantiate.
@@ -22,7 +22,7 @@ public class DeckBuilder {
      * @return 
      */
     public static Deck build52CardDeck() {
-        Collection<Card> cards = new ArrayList<Card>();
+        Collection<Card> cards = new ArrayList<>();
         for (Suit suit : Suit.values()) {
             for (Denomination denom : Denomination.values()) {
                 cards.add(new Card(suit, denom));
