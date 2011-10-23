@@ -12,6 +12,10 @@ public class LoopingIterator<T> implements Iterator<T> {
     
     private Iterator<T> currIterator;
 
+    /**
+     * 
+     * @param iterable - cannot be null
+     */
     public LoopingIterator(Iterable<T> iterable) {
         if (iterable == null) {
             throw new NullPointerException("Iterable arg cannot be null.");

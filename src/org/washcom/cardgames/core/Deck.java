@@ -16,10 +16,12 @@ import java.util.Random;
  * 
  * @author Joe
  */
-public class Deck implements Iterable<Card> {
+public class Deck {
 
     private final Deque<Card> internal = new ArrayDeque<>();
     
+    private final Random random = new Random();
+
     /**
      * Initializes the deck with no cards in it.
      */
@@ -41,25 +43,19 @@ public class Deck implements Iterable<Card> {
         internal.addAll(cards);
     }
 
-    @Override
-    public Iterator<Card> iterator() {
-        return internal.iterator();
-    }
-    
     /**
      * Shuffles the deck according to a uniform random distribution.
      */
     public void shuffle() {
-        Random rand = new Random();
         List<Card> copy = new ArrayList<>();
         copy.addAll(internal);
         internal.clear();
         while (!copy.isEmpty()) {
-            int idx = rand.nextInt(copy.size());
+            int idx = random.nextInt(copy.size());
             internal.push(copy.remove(idx));
         }
     }
-    
+
     /**
      * Remove the top card from the deck. 
      * 
@@ -69,7 +65,7 @@ public class Deck implements Iterable<Card> {
     public Card draw() throws DeckExhaustedException {
         return draw(true);
     }
-    
+
     /**
      * Draw the given number of cards from the deck. The order is preserved in the returned list:
      * the first card is the top card of the deck and so on.
@@ -82,7 +78,7 @@ public class Deck implements Iterable<Card> {
     public List<Card> draw(int nbrOfCards) throws DeckExhaustedException {
         return draw(nbrOfCards, true);
     }
-    
+
     /**
      * Remove the bottom card from the deck. 
      * 
@@ -92,7 +88,7 @@ public class Deck implements Iterable<Card> {
     public Card drawFromBottom() throws DeckExhaustedException {
         return draw(false);
     }
-    
+
     /**
      * Draw the given number of cards from the bottom of the deck. The order is preserved in the returned list:
      * the first card is the bottom card of the deck and so on.
@@ -105,7 +101,7 @@ public class Deck implements Iterable<Card> {
     public List<Card> drawFromBottom(int nbrOfCards) throws DeckExhaustedException {
         return draw(nbrOfCards, false);
     }
-    
+
     /**
      * Remove a card from the deck. If {@code top} is true, it's the top card; otherwise, it's the bottom card.
      *
@@ -144,7 +140,7 @@ public class Deck implements Iterable<Card> {
         }
         return hand;
     }
-    
+
     /**
      * Draws all cards from the deck.
      * 
@@ -154,20 +150,36 @@ public class Deck implements Iterable<Card> {
         try {
             return draw(internal.size());
         } catch (DeckExhaustedException e) {
-            throw new IllegalStateException("This should never happen.");
+            throw new IllegalStateException("This should never happen.", e);
         }
     }
     
+    /**
+     * Draws a card at random.
+     * 
+     * @return
+     * @throws DeckExhaustedException - if there are no cards in the deck to draw
+     */
+    public Card drawAtRandom() throws DeckExhaustedException {
+        if (internal.isEmpty()) {
+            throw new DeckExhaustedException();
+        }
+        Iterator<Card> cards = internal.iterator();
+        Card current = cards.next();
+        for (int i = 0; i < new Random().nextInt(size()); ++i) {
+            current = cards.next();
+        }
+        cards.remove();
+        return current;
+    }
+
     /**
      * Returns the given card to the bottom of the deck.
      * 
      * @param card - cannot be null
      */
-    public void collect(Card card) {
-        if (card == null) {
-            throw new NullPointerException("Card cannot be null.");
-        }
-        internal.addLast(card);
+    public void putOnBottom(Card card) {
+        put(card, false);
     }
 
     /**
@@ -176,39 +188,67 @@ public class Deck implements Iterable<Card> {
      * 
      * @param cards - cannot be null
      */
-    public void collect(List<Card> cards) {
-        if (cards == null) {
-            throw new NullPointerException("Cards collected cannot be null.");
-        }
-        for (Card card : cards) {
-            internal.addLast(card);
-        }
-    }
-    
-    /**
-     * Returns the given card to the top of the deck.
-     * 
-     * @param card - cannot be null
-     */
-    public void replace(Card card) {
-        if (card == null) {
-            throw new NullPointerException("Card cannot be null.");
-        }
-        internal.addFirst(card);
+    public void putOnBottom(List<Card> cards) {
+        put(cards, false);
     }
 
     /**
-     * Returns the given cards to the top of the deck in the order provided. The last card in the
+     * Puts the given card on the top of the deck.
+     * 
+     * @param card - cannot be null
+     */
+    public void put(Card card) {
+        put(card, true);
+    }
+
+    /**
+     * Puts the given cards on the top of the deck in the order provided. The last card in the
      * list becomes the top card of the deck.
      * 
      * @param cards - cannot be null
      */
-    public void replace(List<Card> cards) {
+    public void put(List<Card> cards) {
+        put(cards, true);
+    }
+
+    /**
+     * Returns the given card to the top of the deck if {@code top} is true; otherwise returns the card
+     * to the bottom of the deck.
+     * 
+     * @param top
+     * @param card - cannot be null
+     */
+    private void put(Card card, boolean top) {
+        if (card == null) {
+            throw new NullPointerException("Card cannot be null.");
+        }
+        if (top) {
+            internal.addFirst(card);
+        } else {
+            internal.addLast(card);
+        }
+    }
+
+    /**
+     * Returns the given cards to the deck in the order provided. If {@code top} is true, they're returned to
+     * the top and the last card in the argument list becomes the top card of the deck; otherwise, they're
+     * returned to the bottom of the deck and the last card in the argument list becomes the bottom card.
+     * 
+     * @param top
+     * @param cards - cannot be null
+     */
+    private void put(List<Card> cards, boolean top) {
         if (cards == null) {
             throw new NullPointerException("Cards collected cannot be null.");
         }
-        for (Card card : cards) {
-            internal.addFirst(card);
+        if (top) {
+            for (Card card : cards) {
+                internal.addFirst(card);
+            }
+        } else {
+            for (Card card : cards) {
+                internal.addLast(card);
+            }
         }
     }
 
@@ -228,5 +268,16 @@ public class Deck implements Iterable<Card> {
      */
     public boolean isEmpty() {
         return internal.isEmpty();
+    }
+
+    /**
+     * Returns true if there is at lease one card left in the deck. 
+     * 
+     * This is always true {@code assert isEmpty() != hasCards()}
+     * 
+     * @return 
+     */
+    public boolean hasCards() {
+        return !isEmpty();
     }
 }

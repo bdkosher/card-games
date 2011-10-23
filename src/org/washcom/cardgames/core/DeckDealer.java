@@ -12,23 +12,20 @@ import org.washcom.util.LoopingIterator;
  */
 public class DeckDealer {
     
-    private static void validatePlayers(Collection<Player> players) {
-        if (players == null) {
-            throw new NullPointerException("Players cannot be null.");
-        } else if (players.isEmpty()) {
-            throw new IllegalArgumentException("Players must exceed 0.");
-        }
-    }
-    
     /**
      * Deals the entire deck to all of the given players. Depending on the number of cards/players, some players may
      * have more cards than others.
      * 
      * @param deck
-     * @param players 
+     * @param players - cannot be null or empty
+     * @throws IllegalArgumentException if there are no players to deal to
      */
     public static void dealEntirely(Deck deck, Player... players) {
-        dealEntirely(deck, (players == null || (players.length == 1 && players[0] == null)) ? null : Arrays.asList(players));
+        /* 
+         * It's OK in Java 7 to just check the array for null, no need to check for a (Player[])-typed null, e.g.:
+         * (players == null || (players.length == 1 && players[0] == null))
+         */
+        dealEntirely(deck, players == null ? null : Arrays.asList(players));
     }
     
     /**
@@ -36,46 +33,52 @@ public class DeckDealer {
      * have more cards than others.
      * 
      * @param deck
-     * @param players 
+     * @param players - cannot be null or empty
+     * @throws IllegalArgumentException if there are no players to deal to
      */
     public static void dealEntirely(Deck deck, Collection<Player> players) {
-        validatePlayers(players);
+        if (players == null || players.isEmpty()) {
+            throw new IllegalArgumentException("Must have at least one player to deal to.");
+        }
         Iterator<Player> playerIterator = new LoopingIterator<>(players);
-        for (Card card : deck) {
-            playerIterator.next().getHand().replace(card);
+        while (deck.hasCards()) {
+            playerIterator.next().getHand().put(deck.draw());
         }
     }
     
     /**
-     * Deals the entire deck to all of the given players so that each player has an equal number of cards. Returns the
-     * leftover cards as a new, potentially empty Deck (never null).
+     * Deals the entire deck to all of the given players so that each player has an equal number of cards. 
      * 
      * @param deck
-     * @param players 
+     * @param players - cannot be null, but may be empty
      * @throws IllegalArgumentException if there are more cards than players
      */
-    public static Deck dealFairly(Deck deck, Player... players) {
-        return dealFairly(deck, (players == null || (players.length == 1 && players[0] == null)) ? null : Arrays.asList(players));
+    public static void dealFairly(Deck deck, Player... players) {
+        dealFairly(deck, players == null ? null : Arrays.asList(players));
     }
     
     /**
-     * Deals the entire deck to all of the given players so that each player has an equal number of cards. Returns the
-     * leftover cards as a new, potentially empty Deck (never null).
+     * Deals the entire deck to all of the given players so that each player has an equal number of cards.
      * 
-     * @param deck
-     * @param players 
+     * @param deck - may be empty, but if non-empty, cannot contain fewer cards than players
+     * @param players - cannot be null, but may be empty
      * @throws IllegalArgumentException if there are more cards than players
      */
-    public static Deck dealFairly(Deck deck, Collection<Player> players) {
-        validatePlayers(players);
+    public static void dealFairly(Deck deck, Collection<Player> players) {
+        if (players == null) {
+            throw new NullPointerException("Players cannot be null.");
+        }
+        final int deckSize = deck.size();
         final int nbrOfPlayers = players.size();
-        if (deck.size() < nbrOfPlayers) {
+        if (deckSize == 0 || nbrOfPlayers == 0) {
+            return;
+        } else if (deckSize < nbrOfPlayers) {
             throw new IllegalArgumentException("Deck not large enough for number of players.");
         }
-        Deck leftover = new Deck();
-        leftover.collect(deck.drawFromBottom(deck.size() % nbrOfPlayers));
-        dealEntirely(deck, players);
-        return leftover;
+        Iterator<Player> playerIterator = new LoopingIterator<>(players);
+        for (int i = 0; i < deckSize - (deckSize % nbrOfPlayers); ++i) {
+            playerIterator.next().getHand().put(deck.draw());
+        }
     }
     
 }
