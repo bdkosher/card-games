@@ -1,6 +1,6 @@
 package org.washcom.cardgames.doors;
 
-import org.jocamo.cardgames.core.Card;
+import org.washcom.cardgames.core.Card;
 
 /**
  * In the doors game, you have to turn over a number of cards from the deck which corresponds to the value of the top card

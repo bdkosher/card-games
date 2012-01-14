@@ -1,7 +1,7 @@
 package org.washcom.cardgames.doors;
 
-import org.jocamo.cardgames.core.Card;
-import org.jocamo.cardgames.core.Denomination;
+import org.washcom.cardgames.core.Card;
+import org.washcom.cardgames.core.Denomination;
 
 /**
  * The value of a card is determined by its denomination alone.

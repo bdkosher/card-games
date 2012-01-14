@@ -1,6 +1,6 @@
 package org.washcom.cardgames.doors;
 
-import org.jocamo.cardgames.core.Denomination;
+import org.washcom.cardgames.core.Denomination;
 
 /**
  * Same as a denomination value policy except that the denomination of royalty is the number of letters in their name.

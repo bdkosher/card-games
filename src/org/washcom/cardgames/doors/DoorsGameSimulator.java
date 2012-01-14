@@ -1,10 +1,10 @@
 package org.washcom.cardgames.doors;
 
-import org.jocamo.cardgames.core.DeckBuilder;
-import org.jocamo.cardgames.core.Deck;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import org.washcom.cardgames.core.Deck;
+import org.washcom.cardgames.core.DeckBuilder;
 import org.washcom.cardgames.doors.DoorsGame.Result;
 
 /**

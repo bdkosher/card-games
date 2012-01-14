@@ -1,8 +1,7 @@
 package org.washcom.cardgames.doors;
 
-import java.util.EnumMap;
-import org.jocamo.cardgames.core.Card;
-import org.jocamo.cardgames.core.Color;
+import org.washcom.cardgames.core.Card;
+import org.washcom.cardgames.core.Color;
 
 /**
  * The value of a card is determined by its color alone.

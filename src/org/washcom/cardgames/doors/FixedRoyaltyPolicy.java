@@ -1,7 +1,7 @@
 package org.washcom.cardgames.doors;
 
-import org.jocamo.cardgames.core.Card;
-import org.jocamo.cardgames.core.Denomination;
+import org.washcom.cardgames.core.Card;
+import org.washcom.cardgames.core.Denomination;
 
 /**
  * In a fixed-royalty card value policy, the value of royalty is fixed (10 by default), and the value of all other cards is

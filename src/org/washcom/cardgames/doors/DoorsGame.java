@@ -1,9 +1,9 @@
 package org.washcom.cardgames.doors;
 
-import org.jocamo.cardgames.core.DeckExhaustedException;
-import org.jocamo.cardgames.core.Deck;
 import java.util.List;
-import org.jocamo.cardgames.core.Card;
+import org.washcom.cardgames.core.Card;
+import org.washcom.cardgames.core.Deck;
+import org.washcom.cardgames.core.DeckExhaustedException;
 
 /**
  *
@@ -34,13 +34,13 @@ public class DoorsGame {
         if (deck.isEmpty()) {
             throw new IllegalArgumentException("Cannot play with an empty deck.");
         }
-        
+
         this.deck = deck;
         this.valuePolicy = valuePolicy;
     }
 
     /**
-     * 
+     *
      * @return true - if the game can be continued, false if the game has ended.
      */
     public boolean playRound() {
@@ -49,8 +49,9 @@ public class DoorsGame {
         }
         round++;
         try {
-            /* if it's the first round, turn over the top card; otherwise, turn over the number
-             * of cards shown by the top turned-over card
+            /*
+             * if it's the first round, turn over the top card; otherwise, turn over the number of cards shown by the top
+             * turned-over card
              */
             if (round == 1) {
                 topCard = deck.draw();
@@ -58,7 +59,7 @@ public class DoorsGame {
                 List<Card> drawn = deck.draw(getTopCardValue());
                 topCard = drawn.get(drawn.size() - 1);
             }
-            
+
         } catch (DeckExhaustedException e) {
             result = Result.LOSE;
             return false;
@@ -73,7 +74,7 @@ public class DoorsGame {
     public Card getTopCard() {
         return topCard;
     }
-    
+
     public int getTopCardValue() {
         return valuePolicy.getValue(topCard);
     }
