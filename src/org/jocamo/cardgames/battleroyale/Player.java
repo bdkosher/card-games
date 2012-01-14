@@ -12,6 +12,8 @@ public class Player {
     private Deck hand;
     private int roundsParticipatedIn = 0;
     private int roundsWon = 0;
+    private int roundsInactive = 0;
+    private boolean active;
 
     public Player(int id) {
         this.id = id;
@@ -44,16 +46,49 @@ public class Player {
     public int getRoundsWon() {
         return roundsWon;
     }
+
+    /**
+     * Returns the number of rounds that this player was inactive.
+     * 
+     * @return 
+     */
+    public int getRoundsInactive() {
+        return roundsInactive;
+    }
+    
+    public void incrementRoundsInactive() {
+        ++roundsInactive;
+    }
     
     /**
-     * An inactive player has no cards.
+     * Exchanges hands with the other player.
+     * 
+     * @param other 
+     */
+    public void exchangeHands(Player other) {
+        Deck temp = getHand();
+        setHand(other.getHand());
+        other.setHand(temp);
+    }
+    
+    /**
+     * Returns true if the player is active.
      * 
      * @return 
      */
     public boolean isActive() {
-        return !hand.isEmpty();
+        return active;
     }
 
+    /**
+     * Sets whether or not a player is active.
+     * 
+     * @param active 
+     */
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+    
     @Override
     public String toString() {
         return "Player " + id;

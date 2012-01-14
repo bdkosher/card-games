@@ -17,7 +17,7 @@ import java.util.Random;
  */
 public class Deck {
 
-    private final Deque<Card> internal = new ArrayDeque<Card>();
+    private final Deque<Card> internal = new ArrayDeque<>();
     
     /**
      * Initializes the deck with no cards in it.
@@ -45,7 +45,7 @@ public class Deck {
      */
     public void shuffle() {
         Random rand = new Random();
-        List<Card> copy = new ArrayList<Card>();
+        List<Card> copy = new ArrayList<>();
         copy.addAll(internal);
         internal.clear();
         while (!copy.isEmpty()) {
@@ -80,7 +80,7 @@ public class Deck {
         if (nbrOfCards < 1) {
             throw new IllegalArgumentException("Integer arg must be 1 or more.");
         }
-        List<Card> hand = new ArrayList<Card>();
+        List<Card> hand = new ArrayList<>();
         try {
             for (int i = nbrOfCards; i > 0; --i) {
                 hand.add(internal.removeFirst());
@@ -89,6 +89,19 @@ public class Deck {
             throw new DeckExhaustedException(hand);
         }
         return hand;
+    }
+    
+    /**
+     * Draws all cards from the deck.
+     * 
+     * @return 
+     */
+    public List<Card> drawAll() {
+        try {
+            return draw(internal.size());
+        } catch (DeckExhaustedException e) {
+            throw new IllegalStateException("This should never happen.");
+        }
     }
     
     /**
