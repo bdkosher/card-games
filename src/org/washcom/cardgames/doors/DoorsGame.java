@@ -4,6 +4,9 @@ import java.util.List;
 import org.washcom.cardgames.core.Card;
 import org.washcom.cardgames.core.Deck;
 import org.washcom.cardgames.core.DeckExhaustedException;
+import org.washcom.cardgames.core.SolitaireGameResult;
+import static org.washcom.cardgames.core.SolitaireGameResult.LOSE;
+import static org.washcom.cardgames.core.SolitaireGameResult.WIN;
 
 /**
  *
@@ -11,10 +14,6 @@ import org.washcom.cardgames.core.DeckExhaustedException;
  */
 public class DoorsGame {
 
-    public enum Result {
-
-        WIN, LOSE
-    }
     private final Deck deck;
     private final CardValuePolicy valuePolicy;
     /**
@@ -22,7 +21,7 @@ public class DoorsGame {
      */
     private int round = 0;
     private Card topCard = null;
-    private Result result = null;
+    private SolitaireGameResult result = null;
 
     public DoorsGame(Deck deck, CardValuePolicy valuePolicy) {
         if (deck == null) {
@@ -61,11 +60,11 @@ public class DoorsGame {
             }
 
         } catch (DeckExhaustedException e) {
-            result = Result.LOSE;
+            result = LOSE;
             return false;
         }
         if (deck.isEmpty()) {
-            result = Result.WIN;
+            result = WIN;
             return false;
         }
         return true;
@@ -83,7 +82,7 @@ public class DoorsGame {
         return round;
     }
 
-    public Result getResult() {
+    public SolitaireGameResult getResult() {
         return result;
     }
 

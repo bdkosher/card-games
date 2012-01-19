@@ -1,9 +1,9 @@
 package org.washcom.cardgames.callout;
 
 import java.math.BigDecimal;
-import org.washcom.cardgames.callout.CallOutGame.Result;
 import org.washcom.cardgames.core.Deck;
 import org.washcom.cardgames.core.DeckBuilder;
+import static org.washcom.cardgames.core.SolitaireGameResult.WIN;
 
 /**
  * Win ratios (using 1,000,000 games): 0.016219, 0.016143, 0.016068
@@ -19,7 +19,7 @@ public class CallOutGameSimulator {
             Deck deck = DeckBuilder.build52CardDeck();
             deck.shuffle();
             CallOutGame game = new CallOutGame(deck);
-            gamesWon = gamesWon + (game.playGame() == Result.WIN ? 1 : 0);
+            gamesWon = gamesWon + (game.playGame() == WIN ? 1 : 0);
             ++gamesPlayed;
         }
     }

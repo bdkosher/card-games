@@ -5,14 +5,14 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import org.washcom.cardgames.core.Deck;
 import org.washcom.cardgames.core.DeckBuilder;
-import org.washcom.cardgames.doors.DoorsGame.Result;
+import static org.washcom.cardgames.core.SolitaireGameResult.WIN;
 
 /**
- * 1,000,000 games using the DenominationValuePolicy = 14.2% success rate, inv avg = 0.142857
- * 1,000,000 games using the FixedRoyaltyPolicy(10) = 15.2% success rate, inv avg = 0.153
- * 1,000,000 games using the FixedRoyaltyPolicy(1) = 22.2% success rate, inv avg = 0.224138
- * 1,000,000 games using the ColorValuePolicy(2,1) = 66.6% success rate, inv avg = 0.666667
- * 1,000,000 games using the ColorValuePolicy(5,3) = 26.2% success rate
+ * 1,000,000 games using the DenominationValuePolicy = 14.2% success rate, inv avg = 0.142857 1,000,000 games using the
+ * FixedRoyaltyPolicy(10) = 15.2% success rate, inv avg = 0.153 1,000,000 games using the FixedRoyaltyPolicy(1) = 22.2% success
+ * rate, inv avg = 0.224138 1,000,000 games using the ColorValuePolicy(2,1) = 66.6% success rate, inv avg = 0.666667 1,000,000
+ * games using the ColorValuePolicy(5,3) = 26.2% success rate
+ *
  * @author Joe
  */
 public class DoorsGameSimulator {
@@ -30,7 +30,7 @@ public class DoorsGameSimulator {
 //                        + game.getTopCardValue() + " to be drawn from remaining " + game.getDeck().size() + " cards.");
             }
 //            System.out.println("GAME OVER: " + game.getResult());
-            gamesWon = gamesWon + (game.getResult() == Result.WIN ? 1 : 0);
+            gamesWon = gamesWon + (game.getResult() == WIN ? 1 : 0);
             ++gamesPlayed;
         }
     }

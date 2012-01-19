@@ -4,6 +4,9 @@ import java.util.Arrays;
 import java.util.Iterator;
 import org.washcom.cardgames.core.Deck;
 import org.washcom.cardgames.core.Denomination;
+import org.washcom.cardgames.core.SolitaireGameResult;
+import static org.washcom.cardgames.core.SolitaireGameResult.LOSE;
+import static org.washcom.cardgames.core.SolitaireGameResult.WIN;
 import org.washcom.util.LoopingIterator;
 
 /**
@@ -12,13 +15,8 @@ import org.washcom.util.LoopingIterator;
  * @author Joe
  */
 public class CallOutGame {
-   
-    private static final Iterator<Denomination> CALL_OUTS = new LoopingIterator<>(Arrays.asList(Denomination.values()));
     
-    public enum Result {
-
-        WIN, LOSE
-    }
+    private final Iterator<Denomination> callOuts = new LoopingIterator<>(Arrays.asList(Denomination.values()));
     
     private final Deck deck;
 
@@ -32,12 +30,12 @@ public class CallOutGame {
         this.deck = deck;
     }
     
-    public Result playGame() {
+    public SolitaireGameResult playGame() {
         while (!deck.isEmpty()) {
-            if (deck.draw().getDenomination() == CALL_OUTS.next()) {
-                return Result.LOSE;
+            if (deck.draw().getDenomination() == callOuts.next()) {
+                return LOSE;
             }
         }
-        return Result.WIN;
+        return WIN;
     }
 }
