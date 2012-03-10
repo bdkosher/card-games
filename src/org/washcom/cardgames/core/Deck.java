@@ -1,13 +1,6 @@
 package org.washcom.cardgames.core;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Deque;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Represents a deck of cards.
@@ -120,15 +113,18 @@ public class Deck {
      * Draw the given number of cards from the top of the deck (if {@code top} is true) or the bottom of the deck
      * (if {@code top} is false). The order is preserved in the returned list.
      * 
-     * @param nbrOfCards - must be greater than 0
+     * @param nbrOfCards - must be non-negative
      * @param top - true if to be drawn from the top; false if to be drawn from the bottom
      * @return
      * @throws DeckExhaustedException - if there aren't enough cards in the deck which can be drawn; the
      *      thrown exception will contain the partial list of drawn cards.
      */
     private List<Card> draw(int nbrOfCards, boolean top) throws DeckExhaustedException {
-        if (nbrOfCards < 1) {
+        if (nbrOfCards < 0) {
             throw new IllegalArgumentException("Integer arg must be 1 or more.");
+        }
+        if (nbrOfCards == 0) {
+            return Collections.emptyList();
         }
         List<Card> hand = new ArrayList<>();
         try {

@@ -31,4 +31,15 @@ public final class DeckBuilder {
         assert cards.size() == 52;
         return new Deck(cards);
     }
+    
+    /**
+     * Builds a standard, pre-shuffled deck of 52 cards--no Jokers.
+     * 
+     * @return 
+     */
+    public static Deck buildShuffled52CardDeck() {
+        Deck deck = build52CardDeck();
+        deck.shuffle();
+        return deck;
+    }
 }

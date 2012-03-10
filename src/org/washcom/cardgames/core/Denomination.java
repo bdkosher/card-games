@@ -40,6 +40,11 @@ public enum Denomination {
         return royalty;
     }
 
+    /**
+     * Returns a numeric value indicating the ranking of the denomination. Ace = 1.
+     * 
+     * @return 
+     */
     public int getValue() {
         return value;
     }
