@@ -6,6 +6,9 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import static org.washcom.cardgames.core.Suit.*;
+import static org.washcom.cardgames.core.Denomination.*;
+
 /**
  *
  * @author Joe
@@ -16,7 +19,6 @@ public class DeckDealerTest {
     private Deck singleCardDeck;
     private Deck threeCardDeck;
     private Deck hundredCardDeck;
-    
     private Player[] noPlayers;
     private Player singlePlayer;
     private Player[] twoPlayers;
@@ -26,15 +28,15 @@ public class DeckDealerTest {
     @Before
     public void setUp() {
         emptyDeck = new Deck();
-        singleCardDeck = new Deck(Collections.singletonList(new Card(Suit.CLUBS, Denomination.TEN)));
+        singleCardDeck = new Deck(Collections.singletonList(new Card(TEN, CLUBS)));
         threeCardDeck = new Deck(Arrays.asList(new Card[]{
-                    new Card(Suit.CLUBS, Denomination.TEN),
-                    new Card(Suit.HEARTS, Denomination.THREE),
-                    new Card(Suit.DIAMONDS, Denomination.FIVE),}));
+                    new Card(TEN, CLUBS),
+                    new Card(THREE, HEARTS),
+                    new Card(FIVE, DIAMONDS),}));
         hundredCardDeck = new Deck();
         for (int i = 0; i < 100; ++i) {
-            hundredCardDeck.put(new Card(Suit.values()[i % Suit.values().length],
-                    Denomination.values()[i % Denomination.values().length]));
+            hundredCardDeck.put(new Card(Denomination.values()[i % Denomination.values().length], 
+                    Suit.values()[i % Suit.values().length]));
         }
 
         noPlayers = new Player[0];
@@ -145,7 +147,7 @@ public class DeckDealerTest {
         assertEquals(1, threePlayers[1].getHand().size());
         assertEquals(1, threePlayers[2].getHand().size());
     }
-    
+
     public void testDealFairlyToGreaterNbrOfPlayersWithLeftovers() {
         DeckDealer.dealFairly(hundredCardDeck, threePlayers);
         assertEquals(1, hundredCardDeck.size());
@@ -153,7 +155,7 @@ public class DeckDealerTest {
         assertEquals(33, threePlayers[1].getHand().size());
         assertEquals(33, threePlayers[2].getHand().size());
     }
-    
+
     public void testDealFairlyToGreaterNbrOfPlayersWithNoLeftovers() {
         DeckDealer.dealFairly(hundredCardDeck, fourPlayers);
         assertTrue(hundredCardDeck.isEmpty());
