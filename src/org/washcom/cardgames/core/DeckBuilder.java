@@ -25,7 +25,7 @@ public final class DeckBuilder {
         Collection<Card> cards = new ArrayList<>();
         for (Suit suit : Suit.values()) {
             for (Denomination denom : Denomination.values()) {
-                cards.add(new Card(suit, denom));
+                cards.add(new Card(denom, suit));
             }
         }
         assert cards.size() == 52;

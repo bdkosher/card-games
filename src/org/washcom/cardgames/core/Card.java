@@ -15,10 +15,10 @@ public class Card {
      * Creates a new card of the given suit and denomination.
      * TODO what about Jokers?
      * 
-     * @param suit - cannot be null
      * @param denomination - cannot be null
+     * @param suit - cannot be null
      */
-    public Card(Suit suit, Denomination denomination) {
+    public Card(Denomination denomination, Suit suit) {
         if (suit == null) {
             throw new NullPointerException("Suit arg cannot be null.");
         }
