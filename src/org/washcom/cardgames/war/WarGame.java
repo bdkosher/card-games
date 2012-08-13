@@ -55,7 +55,7 @@ public class WarGame {
      * @param wars - the number of wars that have occurred so far in this recursive battle
      * @return
      */
-    int battle(Deck pot, int fee, int wars) {
+    private int battle(Deck pot, int fee, int wars) {
         int cardsNeededToBattle = fee + 1;
         if (!player1.handHasAtLeast(cardsNeededToBattle)) {
             pot.put(player1.getHand().drawAll());
