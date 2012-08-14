@@ -1,4 +1,4 @@
-package org.washcom.cardgames.war;
+package org.washcom.cardgames.core;
 
 import java.util.Comparator;
 import java.util.EnumMap;
