@@ -3,8 +3,6 @@ package org.washcom.cardgames.core;
 import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.Map;
-import org.washcom.cardgames.core.Card;
-import org.washcom.cardgames.core.Denomination;
 import static org.washcom.cardgames.core.Denomination.ACE;
 import static org.washcom.cardgames.core.Denomination.KING;
 

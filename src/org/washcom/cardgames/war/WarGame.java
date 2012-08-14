@@ -1,6 +1,5 @@
 package org.washcom.cardgames.war;
 
-import org.washcom.cardgames.core.AcesHighCardComparator;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
