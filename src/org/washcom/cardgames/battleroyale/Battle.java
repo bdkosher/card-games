@@ -1,7 +1,9 @@
 package org.washcom.cardgames.battleroyale;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -11,19 +13,12 @@ public class Battle {
 
     public static final int MAXIMUM_BATTLE_CONTINUATIONS = 3;
 
-    public enum Status {
-
-        IN_PROGRESS,
-        WON,
-        UNRESOLVED
-    }
     private final int number;
     private final BattleRoyaleGame game;
-    
     private final List<BattleCard> battleCards = new ArrayList<>();
+    private final List<Player> battlers;
     private int continuations = 0;
-    private Status status = Status.IN_PROGRESS;
-
+    
     /**
      * Creates a new battle.
      *
@@ -39,6 +34,7 @@ public class Battle {
         }
         this.number = number;
         this.game = game;
+        this.battlers = game.getActivePlayers();
     }
 
     /**
@@ -57,38 +53,64 @@ public class Battle {
     public List<BattleCard> getBattleCards() {
         return battleCards;
     }
-    
-    public boolean isBeingFought() {
-        return status == Status.IN_PROGRESS;
-    }
 
     /**
-     * In the event the battle cards are inconclusive, this method continues the battle. The battle cards played are added to the
-     * game deck. If the continuations exceed the maximum, the battle will be marked as over and.
+     * Does a skirmish: collects a single card from each active player. Returns the winning player or null if there is no winning
+     * player.
+     *
+     * @return
      */
-    public void continueBattle() {
-        if (status != Status.IN_PROGRESS) {
-            throw new IllegalStateException("The battle is over.");
+    public void fight(BattleAssessor assessor) {
+        for (; continuations < MAXIMUM_BATTLE_CONTINUATIONS; ++continuations) {
+            playBattleCards();
+            BattleCard winner = assessor.pickWinner(this);
+            addBattleCardsToGamePot();
+            if (winner != null) {
+                spoilsToTheVictor(winner.getPlayedBy());
+            } else {
+                eliminateCardlessBattlers();
+                Map<Player, Integer> fees = assessor.determineFees(this);
+                collectBattleFees(fees);
+                eliminateCardlessBattlers();
+            }
         }
+        // TODO unresolved battle, so any inactive player gets the spoils
+    }
+    
+    private void playBattleCards() {
+        for (Player battler : battlers) {
+            battleCards.add(new BattleCard(battler.getHand().draw(), battler));
+        }
+    }
+    
+    private void spoilsToTheVictor(Player victor) {
+        victor.getHand().putOnBottom(game.getGameCards().drawAll());
+    }
+    
+    private void addBattleCardsToGamePot() {
         for (BattleCard battleCard : battleCards) {
             game.getGameCards().put(battleCard.getCard());
         }
         battleCards.clear();
-        continuations++;
-        if (continuations == MAXIMUM_BATTLE_CONTINUATIONS) {
-            status = Status.UNRESOLVED;
-        }
     }
-
-    public void skirmish(List<Player> battlers) {
-        if (status != Status.IN_PROGRESS) {
-            throw new IllegalStateException("The battle is over.");
-        }
-        for (Player battler : battlers) {
-            if (battler.handHasAtLeast(1)) {
-                battleCards.add(new BattleCard(battler.getHand().draw(), battler));
+    
+    private void eliminateCardlessBattlers() {
+        for (Iterator<Player> it = battlers.iterator(); it.hasNext(); ) {
+            if (it.next().getHand().isEmpty()) {
+                it.remove();
             }
         }
     }
-
+    
+    /**
+     * Collects fees from the battle
+     * @return 
+     */
+    private void collectBattleFees(Map<Player, Integer> fees) {
+        for (Map.Entry<Player, Integer> entry : fees.entrySet()) {
+            Player battler = entry.getKey();
+            int fee = entry.getValue();
+            game.getGameCards().put(battler.getHand().drawUpTo(fee));
+        }
+    }
 }

@@ -20,6 +20,12 @@ public class BattleRoyaleGame {
     private static final int MINIMUM_NUMBER_OF_PLAYERS = 2;
     private static final boolean LEFTOVER_CARDS_FROM_DEAL_GO_INTO_GAMEPOT = true;
     private final BattleAssessor assessor;
+        
+    private List<Player> players;
+    private Deck gameCards;
+    private int currentRoundNumber = 0;
+    private Battle currentBattle;
+    private Player winner = null;
 
     /**
      * Initializes a new game. The game is not started until {@code start} is called. The provided listener is responsible for
@@ -33,11 +39,6 @@ public class BattleRoyaleGame {
         }
         this.assessor = assessor;
     }
-    private List<Player> players;
-    private Deck gameCards;
-    private int currentRoundNumber = 0;
-    private Battle currentBattle;
-    private Player winner = null;
 
     /**
      * Starts a new game of Battle Royale.
@@ -91,34 +92,7 @@ public class BattleRoyaleGame {
 
     public void battle() {
         currentBattle = new Battle(++currentRoundNumber, this);
-        while (currentBattle.isBeingFought()) {
-            collectBattleFees();
-            List<Player> battlers = getActivePlayers();
-            if (battlers.size() <= 1) {
-                break;
-            }
-            currentBattle.skirmish(battlers);
-//            assessor.pickWinner(null)
-            //List<BattleCard> battleCards = currentBattle.getBattleCards();
-            if (battlers.size() > 1) {
-            }
-        }
-    }
-
-    private void collectBattleFees() {
-        Map<Player, Integer> fees = assessor.determineFees(currentBattle);
-                currentBattle.continueBattle();
-        for (Map.Entry<Player, Integer> entry : fees.entrySet()) {
-            Player player = entry.getKey();
-            int fee = entry.getValue();
-            gameCards.put(player.getHand().drawUpTo(fee));
-
-            /*
-             * TODO: allow configurable policy that addresses what happens when fees cannot be paid: - person pays all he can and
-             * therefore becomes inactive - the person pays a fee equal to his number of cards minus 1 (so he can skirmish) -
-             * person doesn't pay any fees and drops out of battle but stays active
-             */
-        }
+        currentBattle.fight(assessor);
     }
 
     /**
