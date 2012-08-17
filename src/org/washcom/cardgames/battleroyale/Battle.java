@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Joe
  */
 public class Battle {
-    
+    private static final Logger log = Logger.getLogger(Battle.class.toString());
     public static final int MAXIMUM_BATTLE_CONTINUATIONS = 3;
     private final int number;
     private final BattleRoyaleGame game;
@@ -53,15 +54,26 @@ public class Battle {
     }
 
     /**
+     * Returns the number of times the battle has continued beyond the initial playing of battle cards.
+     * 
+     * @return 
+     */
+    public int getContinuations() {
+        return continuations;
+    }
+    
+    /**
      * Does a skirmish: collects a single card from each active player. Returns the winning player or null if there is no winning
      * player.
      *
      * @return
      */
     public void fight(BattleAssessor assessor) {
+        log.info("Fighting battle " + number);
         this.battlers = game.getActivePlayers();
         Player nonBattler = findNonBattler();
         for (; continuations <= MAXIMUM_BATTLE_CONTINUATIONS; ++continuations) {
+            log.info("Executing continuation " + continuations + " of battle " + number);
             playBattleCards();
             BattleCard winner = assessor.pickWinner(this);
             addBattleCardsToGamePot();
@@ -101,16 +113,19 @@ public class Battle {
     }
 
     private void playBattleCards() {
+        log.info("Playing battle cards");
         for (Player battler : battlers) {
             battleCards.add(new BattleCard(battler.getHand().draw(), battler));
         }
     }
 
     private void spoilsToTheVictor(Player victor) {
+        log.info("Giving spoils to " + victor);
         victor.getHand().putOnBottom(game.getGameCards().drawAll());
     }
 
     private void addBattleCardsToGamePot() {
+        log.info("Adding " + battleCards.size() + " battle cards to game pot");
         for (BattleCard battleCard : battleCards) {
             game.getGameCards().put(battleCard.getCard());
         }
@@ -118,9 +133,11 @@ public class Battle {
     }
 
     private void eliminateCardlessBattlers() {
+        log.info("Eliminating cardless battlers");
         for (Iterator<Player> it = battlers.iterator(); it.hasNext();) {
             if (it.next().getHand().isEmpty()) {
                 it.remove();
+                log.info("Removed battler");
             }
         }
     }
@@ -131,9 +148,11 @@ public class Battle {
      * @return
      */
     private void addFeeCardsToGamePot(Map<Player, Integer> fees) {
+        log.info("Adding fee cards to battle pot");
         for (Map.Entry<Player, Integer> entry : fees.entrySet()) {
             Player battler = entry.getKey();
             int fee = entry.getValue();
+            log.info("Battler " + battler + " pays fee of " + fee);
             game.getGameCards().put(battler.getHand().drawUpTo(fee));
         }
     }
