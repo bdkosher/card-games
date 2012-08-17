@@ -97,7 +97,7 @@ public class WarGame {
         }
     }
     
-    public class Result {
+    public static class Result {
         Player winner;
         int totalBattles = 0;
         /**
