@@ -1,5 +1,7 @@
 package org.washcom.cardgames.battleroyale;
 
+import org.washcom.cardgames.core.Deck;
+
 /**
  *
  * @author Joe
@@ -36,5 +38,20 @@ public class Player extends org.washcom.cardgames.core.Player {
 
     public void incrementNbrOfBattlesWon() {
         ++nbrOfBattlesWon;
+    }
+    
+    /**
+     * This player swaps hands with given player.
+     * 
+     * @param other 
+     */
+    public void swapHands(Player other) {
+        if (other == null) {
+            throw new IllegalArgumentException("Other player cannot be null.");
+        }
+        if (this == other) return;
+        Deck swap = new Deck(getHand().drawAll());
+        getHand().put(other.getHand().drawAll());
+        other.getHand().put(swap.drawAll());
     }
 }
