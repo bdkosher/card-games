@@ -4,21 +4,24 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Joe
  */
 public class Battle {
-
+    private static final Logger log = LogManager.getLogManager().getLogger(Battle.class.toString());
+    
     public static final int MAXIMUM_BATTLE_CONTINUATIONS = 3;
-
     private final int number;
     private final BattleRoyaleGame game;
     private final List<BattleCard> battleCards = new ArrayList<>();
-    private final List<Player> battlers;
+    private List<Player> battlers;
     private int continuations = 0;
-    
+
     /**
      * Creates a new battle.
      *
@@ -34,7 +37,6 @@ public class Battle {
         }
         this.number = number;
         this.game = game;
-        this.battlers = game.getActivePlayers();
     }
 
     /**
@@ -61,52 +63,79 @@ public class Battle {
      * @return
      */
     public void fight(BattleAssessor assessor) {
-        for (; continuations < MAXIMUM_BATTLE_CONTINUATIONS; ++continuations) {
+        this.battlers = game.getActivePlayers();
+        Player nonBattler = findNonBattler();
+        for (; continuations <= MAXIMUM_BATTLE_CONTINUATIONS; ++continuations) {
+            log.log(Level.FINE, "Starting/continuing fight: battle {0}, phase {1}", new Object[]{number, continuations + 1});
             playBattleCards();
             BattleCard winner = assessor.pickWinner(this);
             addBattleCardsToGamePot();
             if (winner != null) {
                 spoilsToTheVictor(winner.getPlayedBy());
-            } else {
-                eliminateCardlessBattlers();
-                Map<Player, Integer> fees = assessor.determineFees(this);
-                collectBattleFees(fees);
-                eliminateCardlessBattlers();
+                return;
+            }
+            
+            eliminateCardlessBattlers();
+            if (battlers.size() == 1) {
+                spoilsToTheVictor(battlers.get(0));
+                return;
+            }
+            
+            addFeeCardsToGamePot(assessor.determineFees(this));
+            
+            eliminateCardlessBattlers();
+            if (battlers.size() == 1) {
+                spoilsToTheVictor(battlers.get(0));
+                return;
             }
         }
-        // TODO unresolved battle, so any inactive player gets the spoils
+        // unresolved battle, so inactive player gets the spoils
+        spoilsToTheVictor(nonBattler);
     }
-    
+
+    /**
+     * The non-battler is eligible to receive all the spoils in the event of an unresolvable battle. If all players are battling,
+     * or if there is more than one non-battler, this method returns null.
+     *
+     * @return
+     */
+    private Player findNonBattler() {
+        List<Player> allPlayers = new ArrayList<>(game.getPlayers());
+        allPlayers.removeAll(battlers);
+        return allPlayers.size() == 1 ? allPlayers.get(0) : null;
+    }
+
     private void playBattleCards() {
         for (Player battler : battlers) {
             battleCards.add(new BattleCard(battler.getHand().draw(), battler));
         }
     }
-    
+
     private void spoilsToTheVictor(Player victor) {
         victor.getHand().putOnBottom(game.getGameCards().drawAll());
     }
-    
+
     private void addBattleCardsToGamePot() {
         for (BattleCard battleCard : battleCards) {
             game.getGameCards().put(battleCard.getCard());
         }
         battleCards.clear();
     }
-    
+
     private void eliminateCardlessBattlers() {
-        for (Iterator<Player> it = battlers.iterator(); it.hasNext(); ) {
+        for (Iterator<Player> it = battlers.iterator(); it.hasNext();) {
             if (it.next().getHand().isEmpty()) {
                 it.remove();
             }
         }
     }
-    
+
     /**
      * Collects fees from the battle
-     * @return 
+     *
+     * @return
      */
-    private void collectBattleFees(Map<Player, Integer> fees) {
+    private void addFeeCardsToGamePot(Map<Player, Integer> fees) {
         for (Map.Entry<Player, Integer> entry : fees.entrySet()) {
             Player battler = entry.getKey();
             int fee = entry.getValue();

@@ -1,6 +1,5 @@
 package org.washcom.cardgames.battleroyale;
 
-import java.util.List;
 import java.util.Map;
 
 /**
