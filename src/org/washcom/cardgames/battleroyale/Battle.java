@@ -4,16 +4,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 /**
  *
  * @author Joe
  */
 public class Battle {
-    private static final Logger log = LogManager.getLogManager().getLogger(Battle.class.toString());
     
     public static final int MAXIMUM_BATTLE_CONTINUATIONS = 3;
     private final int number;
@@ -66,7 +62,6 @@ public class Battle {
         this.battlers = game.getActivePlayers();
         Player nonBattler = findNonBattler();
         for (; continuations <= MAXIMUM_BATTLE_CONTINUATIONS; ++continuations) {
-            log.log(Level.FINE, "Starting/continuing fight: battle {0}, phase {1}", new Object[]{number, continuations + 1});
             playBattleCards();
             BattleCard winner = assessor.pickWinner(this);
             addBattleCardsToGamePot();

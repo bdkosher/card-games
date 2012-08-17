@@ -3,10 +3,10 @@ package org.washcom.cardgames.doors;
 import java.util.List;
 import org.washcom.cardgames.core.Card;
 import org.washcom.cardgames.core.Deck;
-import org.washcom.cardgames.core.DeckExhaustedException;
 import org.washcom.cardgames.core.SolitaireGameResult;
 import static org.washcom.cardgames.core.SolitaireGameResult.LOSE;
 import static org.washcom.cardgames.core.SolitaireGameResult.WIN;
+import org.washcom.util.DeckExhaustedException;
 
 /**
  *

@@ -10,6 +10,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import static org.washcom.cardgames.core.Denomination.*;
 import static org.washcom.cardgames.core.Suit.*;
+import org.washcom.util.DeckExhaustedException;
 
 /**
  *

@@ -3,7 +3,6 @@ package org.washcom.cardgames.battleroyale;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import org.washcom.cardgames.core.Deck;
 import org.washcom.cardgames.core.DeckDealer;
 
@@ -40,19 +39,6 @@ public class BattleRoyaleGame {
         this.assessor = assessor;
     }
 
-    /**
-     * Starts a new game of Battle Royale.
-     *
-     * @param deck - the cards to be used in the game
-     * @param players - the players who will be playing the game
-     */
-    public void start(Deck deck, Player... players) {
-        if (currentRoundNumber > 0) {
-            throw new IllegalStateException("Game has already been started.");
-        }
-        initializeGame(deck, players);
-    }
-
     private void initializeGame(Deck deck, Player... players) {
         if (deck == null) {
             throw new IllegalArgumentException("Deck cannot be null.");
@@ -72,7 +58,14 @@ public class BattleRoyaleGame {
         }
     }
 
-    public void play() {
+    /**
+     * Starts a new game of Battle Royale.
+     *
+     * @param deck - the cards to be used in the game
+     * @param players - the players who will be playing the game
+     */
+    public void play(Deck deck, Player... players) {
+        initializeGame(deck, players);
         /*
          * Battle as long as there are two or more players in the game.
          */
@@ -90,7 +83,7 @@ public class BattleRoyaleGame {
         }
     }
 
-    public void battle() {
+    void battle() {
         currentBattle = new Battle(++currentRoundNumber, this);
         currentBattle.fight(assessor);
     }
