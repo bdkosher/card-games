@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.washcom.cardgames.core.Denomination;
-
 import static org.washcom.cardgames.core.Denomination.*;
 
 /**
@@ -19,12 +18,22 @@ public class TwoBattlerAssessor implements BattleAssessor {
     
     public static int MAX_VALUE_DIFF = 2;
     
+    private final boolean handleDeckSwaps;
+
+    public TwoBattlerAssessor() {
+        this(true);
+    }
+    
+    public TwoBattlerAssessor(boolean handleDeckSwaps) {
+        this.handleDeckSwaps = handleDeckSwaps;
+    }
+    
     public static final Map<Denomination, Integer> battleRoyaleFees = new HashMap<Denomination, Integer>() {
         {
-            battleRoyaleFees.put(Denomination.ACE, 4);
-            battleRoyaleFees.put(Denomination.KING, 3);
-            battleRoyaleFees.put(Denomination.QUEEN, 2);
-            battleRoyaleFees.put(Denomination.JACK, 1);
+            put(Denomination.ACE, 4);
+            put(Denomination.KING, 3);
+            put(Denomination.QUEEN, 2);
+            put(Denomination.JACK, 1);
         }
     };
 
@@ -34,6 +43,11 @@ public class TwoBattlerAssessor implements BattleAssessor {
         checkBattlers(cards);
         BattleCard one = cards.get(0);
         BattleCard two = cards.get(1);
+        
+        /* J8 combo means that the players immediately swap decks. */
+        if (handleDeckSwaps && isJackEightCombo(one, two)) {
+            one.getPlayedBy().swapHands(two.getPlayedBy());
+        }
         
         /*
          * In a Battle Royale scenario, no one wins
@@ -59,15 +73,6 @@ public class TwoBattlerAssessor implements BattleAssessor {
         return diff > 0 ? one : two;
     }
     
-    public static boolean isBattleRoyale(BattleCard one, BattleCard two) {
-        return one.isBattleRoyaleEligible() && two.isBattleRoyaleEligible();
-    }
-    
-    public static boolean isAceTwoCombo(BattleCard one, BattleCard two) {
-        return (one.getCard().getDenomination() == ACE && two.getCard().getDenomination() == TWO)
-                || (two.getCard().getDenomination() == ACE && one.getCard().getDenomination() == TWO);
-    }
-
     @Override
     public Map<Player, Integer> determineFees(Battle battle) {
         List<BattleCard> cards = battle.getBattleCards();
@@ -92,5 +97,22 @@ public class TwoBattlerAssessor implements BattleAssessor {
         if (cards.size() != 2) {
             throw new IllegalArgumentException("Must be two players.");
         }
+    }
+    
+    public static boolean isBattleRoyale(BattleCard one, BattleCard two) {
+        return one.isBattleRoyaleEligible() && two.isBattleRoyaleEligible();
+    }
+    
+    public static boolean isDenominationCombo(BattleCard one, BattleCard two, Denomination comboOne, Denomination comboTwo) {
+        return (one.getCard().getDenomination() == comboOne && two.getCard().getDenomination() == comboTwo)
+                || (two.getCard().getDenomination() == comboOne && one.getCard().getDenomination() == comboTwo);
+    }
+    
+    public static boolean isAceTwoCombo(BattleCard one, BattleCard two) {
+        return isDenominationCombo(one, two, ACE, TWO);
+    }
+    
+    public static boolean isJackEightCombo(BattleCard one, BattleCard two) {
+        return isDenominationCombo (one, two, JACK, EIGHT);
     }
 }
