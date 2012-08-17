@@ -18,8 +18,11 @@ public interface BattleAssessor {
     BattleCard pickWinner(Battle battle);
 
     /**
-     * Returns a mapping of Players to the number of cards they must pay as fees in order to continue the battle. If a player is
-     * absent from the map, that means the player is not eligible to continue battle.
+     * Returns a mapping of Players to the number of cards they must pay as fees in order to continue the battle. 
+     * 
+     * Implementations may presume that the battle has no definitive winner and need not check that there is a winner first.
+     * 
+     * Implementations need not check to see if the player is able to pay the fee.
      * 
      * @param battle - cannot be null
      */
