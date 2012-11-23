@@ -1,0 +1,47 @@
+apply plugin: 'java'
+
+def javaVersion = 1.7
+def javaHome = findJavaHome()
+println "Java Home: ${javaHome}"
+def javaFxJars = ["${javaHome}/lib/ant-javafx.jar", "${javaHome}/jre/lib/jfxrt.jar"]
+
+sourceCompatibility = javaVersion
+targetCompatibility = javaVersion
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile files(*javaFxJars)
+    compile group: 'com.google.guava', name: 'guava', version: '12.0'
+    testCompile group: 'junit', name: 'junit', version: '4.10'
+    testCompile group: 'org.mockito', name: 'mockito-all', version: '1.9.0'
+}
+
+// For now, make it agree with NetBeans' layout. TODO switch to default layout
+sourceSets {
+    main {
+        java {
+            srcDir 'src'
+        }
+    }
+    test {
+        java {
+            srcDir 'test'
+        }
+    }
+}
+
+def findJavaHome() {
+    def javaHome = System.env["JAVA_HOME"]
+    if (javaHome != null && new File(javaHome).exists()) {
+        return javaHome
+    }
+    
+    javaHome = System.properties['java.home']
+    javaHome = javaHome - '/jre' - '\\jre'
+    return javaHome
+}
