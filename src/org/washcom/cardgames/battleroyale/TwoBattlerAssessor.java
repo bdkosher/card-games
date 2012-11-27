@@ -1,8 +1,10 @@
 package org.washcom.cardgames.battleroyale;
 
+import com.google.common.base.Preconditions;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import static org.washcom.cardgames.battleroyale.Rules.*;
 import org.washcom.cardgames.core.Denomination;
 import static org.washcom.cardgames.core.Denomination.*;
 
@@ -13,10 +15,6 @@ import static org.washcom.cardgames.core.Denomination.*;
  * @author Joe
  */
 public class TwoBattlerAssessor implements BattleAssessor {
-    
-    public static int MAX_VALUE_DIFF_FEE = 3;
-    
-    public static int MAX_VALUE_DIFF = 2;
     
     private final boolean handleDeckSwaps;
 
@@ -39,8 +37,8 @@ public class TwoBattlerAssessor implements BattleAssessor {
 
     @Override
     public BattleCard pickWinner(Battle battle) {
+        checkBattlers(battle.getBattlers());
         List<BattleCard> cards = battle.getBattleCards();
-        checkBattlers(cards);
         BattleCard one = cards.get(0);
         BattleCard two = cards.get(1);
         
@@ -66,7 +64,7 @@ public class TwoBattlerAssessor implements BattleAssessor {
          * If the value difference is equal or under the max value difference, no winner can be declared. 
          */
         int diff = one.computeValueDifference(two);
-        if (Math.abs(diff) <= MAX_VALUE_DIFF) {
+        if (isDifferentialUnderBattleThreshold(diff)) {
             return null;
         }
         
@@ -75,15 +73,15 @@ public class TwoBattlerAssessor implements BattleAssessor {
     
     @Override
     public Map<Player, Integer> determineFees(Battle battle) {
+        checkBattlers(battle.getBattlers());
         List<BattleCard> cards = battle.getBattleCards();
-        checkBattlers(cards);
         BattleCard one = cards.get(0);
         BattleCard two = cards.get(1);
 
         Map<Player, Integer> result = new HashMap<>();
         if (isBattleRoyale(one, two)) {
-            result.put(one.getPlayedBy(), battleRoyaleFees.get(one.getCard().getDenomination()));
-            result.put(two.getPlayedBy(), battleRoyaleFees.get(two.getCard().getDenomination()));
+            result.put(one.getPlayedBy(), battleRoyaleFee(one));
+            result.put(two.getPlayedBy(), battleRoyaleFee(two));
             return result;
         }
         
@@ -93,26 +91,7 @@ public class TwoBattlerAssessor implements BattleAssessor {
         return result;
     }
     
-    private static void checkBattlers(List<BattleCard> cards) {
-        if (cards.size() != 2) {
-            throw new IllegalArgumentException("Must be two players.");
-        }
-    }
-    
-    public static boolean isBattleRoyale(BattleCard one, BattleCard two) {
-        return one.isBattleRoyaleEligible() && two.isBattleRoyaleEligible();
-    }
-    
-    public static boolean isDenominationCombo(BattleCard one, BattleCard two, Denomination comboOne, Denomination comboTwo) {
-        return (one.getCard().getDenomination() == comboOne && two.getCard().getDenomination() == comboTwo)
-                || (two.getCard().getDenomination() == comboOne && one.getCard().getDenomination() == comboTwo);
-    }
-    
-    public static boolean isAceTwoCombo(BattleCard one, BattleCard two) {
-        return isDenominationCombo(one, two, ACE, TWO);
-    }
-    
-    public static boolean isJackEightCombo(BattleCard one, BattleCard two) {
-        return isDenominationCombo (one, two, JACK, EIGHT);
+    private static void checkBattlers(List<Player> battlers) {
+        Preconditions.checkState(battlers.size() == 2);
     }
 }

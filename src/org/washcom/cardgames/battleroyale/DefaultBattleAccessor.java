@@ -1,69 +1,45 @@
 package org.washcom.cardgames.battleroyale;
 
-import java.util.List;
+import java.util.Collections;
 import java.util.Map;
 
-import org.washcom.cardgames.core.Denomination;
-
-
 public class DefaultBattleAccessor implements BattleAssessor {
-    
+
+    private final TwoBattlerAssessor twoBattlerAssessor;
+    private final ThreeBattlerAssessor threeBattlerAssessor;
+
+    public DefaultBattleAccessor() {
+        this(true);
+    }
+
+    public DefaultBattleAccessor(boolean handleDeckSwaps) {
+        twoBattlerAssessor = new TwoBattlerAssessor(handleDeckSwaps);
+        threeBattlerAssessor = new ThreeBattlerAssessor(handleDeckSwaps);
+    }
 
     @Override
     public BattleCard pickWinner(Battle battle) {
-        for (int i = 0; i < battle.getBattleCards().size(); i++) {
-            for (int j = i + 1; j < battle.getBattleCards().size(); j++) {
-                int val1 = battle.getBattleCards().get(i).getCard().getDenomination().getValue();
-                int val2 = battle.getBattleCards().get(j).getCard().getDenomination().getValue();
-                if (Math.abs(val1 - val2) < 3) {
-                    return null;
-                }
-            }
+        switch (battle.getBattlers().size()) {
+            case 3:
+                return threeBattlerAssessor.pickWinner(battle);
+            case 2:
+                return twoBattlerAssessor.pickWinner(battle);
+            case 1:
+                return battle.getBattleCards().get(0);
+            default:
+                throw new IllegalStateException("Number of battlers must be 2 or 3.");
         }
-        
-        if (hasMultipleRoyalty(battle.getBattleCards())) {
-            return null;
-        }
-        
-        if (hasJackEight(battle.getBattleCards())) {
-            return null;
-        }
-        
-        throw new RuntimeException("Not implemented");
-    }
-    
-    private boolean hasJackEight(List<BattleCard> cards) {
-        boolean foundJack = false;
-        boolean foundEight = false;
-        for (BattleCard card : cards) {
-            if (card.getCard().getDenomination() == Denomination.EIGHT) {
-                foundEight = true;
-            } else if (card.getCard().getDenomination() == Denomination.JACK) {
-                foundJack = true;
-            }
-        }
-
-        return foundEight && foundJack;
-    }
-    
-    private boolean hasMultipleRoyalty(List<BattleCard> cards) {
-        int royaltyCount = 0;
-        for (BattleCard card : cards) {
-            if (card.getCard().getDenomination().isRoyalty() || card.getCard().getDenomination() == Denomination.ACE) {
-                royaltyCount++;
-            }
-            if (royaltyCount > 1) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     @Override
     public Map<Player, Integer> determineFees(Battle battle) {
-        // TODO Auto-generated method stub
-        return null;
+        switch (battle.getBattlers().size()) {
+            case 3:
+                return threeBattlerAssessor.determineFees(battle);
+            case 2:
+                return twoBattlerAssessor.determineFees(battle);
+            default:
+                return Collections.emptyMap();
+        }
     }
-
 }

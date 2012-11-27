@@ -5,6 +5,8 @@ import java.util.Map;
 /**
  * Manages the rules for assessing which cards win a battle and the fees associated with playing certain card combinations.
  * 
+ * TODO these could probably be combined into a single method.
+ * 
  * @author Joe
  */
 public interface BattleAssessor {
@@ -18,7 +20,8 @@ public interface BattleAssessor {
     BattleCard pickWinner(Battle battle);
 
     /**
-     * Returns a mapping of Players to the number of cards they must pay as fees in order to continue the battle. 
+     * Returns a mapping of Players to the number of cards they must pay as fees in order to continue the battle. Battlers who
+     * are not eligible to continue battle should not be present in the map.
      * 
      * Implementations may presume that the battle has no definitive winner and need not check that there is a winner first.
      * 

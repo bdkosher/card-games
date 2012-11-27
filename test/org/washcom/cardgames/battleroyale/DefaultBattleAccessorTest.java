@@ -1,9 +1,8 @@
 package org.washcom.cardgames.battleroyale;
 
 import java.util.Arrays;
-
-import org.junit.Test;
 import junit.framework.Assert;
+import org.junit.Test;
 import org.mockito.Mockito;
 import org.washcom.cardgames.core.Card;
 import org.washcom.cardgames.core.Denomination;
@@ -22,7 +21,7 @@ public class DefaultBattleAccessorTest {
                 Suit.CLUBS), Mockito.mock(Player.class));
         Mockito.when(battle.getBattleCards()).thenReturn(
                 Arrays.asList(card1, card2));
-        Assert.assertNull(accessor.pickWinner(battle));
+        Assert.assertEquals(card1, accessor.pickWinner(battle));
     }
     
     @Test

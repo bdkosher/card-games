@@ -29,8 +29,14 @@ public class BattleRoyaleGame {
     /**
      * Initializes a new game. The game is not started until {@code start} is called. The provided listener is responsible for
      * driving the state of the game.
-     *
-     * @param listener
+     */
+    public BattleRoyaleGame() {
+        this(new DefaultBattleAccessor());
+    }
+    
+    /**
+     * Initializes a new game. The game is not started until {@code start} is called. The provided listener is responsible for
+     * driving the state of the game.
      */
     public BattleRoyaleGame(BattleAssessor assessor) {
         if (assessor == null) {
@@ -90,8 +96,6 @@ public class BattleRoyaleGame {
 
     /**
      * Returns the current battle.
-     *
-     * @return
      */
     public Battle getCurrentBattle() {
         return currentBattle;
@@ -99,8 +103,6 @@ public class BattleRoyaleGame {
 
     /**
      * Returns the players playing this game.
-     *
-     * @return
      */
     public List<Player> getPlayers() {
         return players;
@@ -108,8 +110,6 @@ public class BattleRoyaleGame {
 
     /**
      * Returns the cards which do not belong to any player in particular.
-     *
-     * @return
      */
     public Deck getGameCards() {
         return gameCards;
@@ -117,8 +117,6 @@ public class BattleRoyaleGame {
 
     /**
      * Returns all players who are participating in this game.
-     *
-     * @return
      */
     public List<Player> getActivePlayers() {
         List<Player> active = new ArrayList<>(players.size());
@@ -131,9 +129,7 @@ public class BattleRoyaleGame {
     }
 
     /**
-     * Returns the winner of the game. If the game hasn't started, this method returns null.
-     *
-     * @return
+     * Returns the winner of the game. If the game hasn't finished, this method will return null.
      */
     public Player getWinner() {
         return winner;
@@ -141,8 +137,6 @@ public class BattleRoyaleGame {
 
     /**
      * Returns the number of rounds played so far.
-     *
-     * @return
      */
     public int getRoundsPlayed() {
         return currentRoundNumber;
