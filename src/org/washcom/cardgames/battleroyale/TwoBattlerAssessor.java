@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import static org.washcom.cardgames.battleroyale.Rules.*;
 import org.washcom.cardgames.core.Denomination;
 import static org.washcom.cardgames.core.Denomination.*;
@@ -15,6 +16,8 @@ import static org.washcom.cardgames.core.Denomination.*;
  * @author Joe
  */
 public class TwoBattlerAssessor implements BattleAssessor {
+    
+    private static final Logger log = Logger.getLogger(TwoBattlerAssessor.class.toString());
     
     private final boolean handleDeckSwaps;
 
@@ -44,6 +47,7 @@ public class TwoBattlerAssessor implements BattleAssessor {
         
         /* J8 combo means that the players immediately swap decks. */
         if (handleDeckSwaps && isJackEightCombo(one, two)) {
+            log.info(one + " swapped hands with " + two);
             one.getPlayedBy().swapHands(two.getPlayedBy());
         }
         
