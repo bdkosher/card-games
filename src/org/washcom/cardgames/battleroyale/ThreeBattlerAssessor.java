@@ -16,18 +16,8 @@ import static org.washcom.cardgames.core.Denomination.TWO;
  * @author Joe
  */
 public class ThreeBattlerAssessor implements BattleAssessor {
-    
+
     private static final Logger log = Logger.getLogger(ThreeBattlerAssessor.class.toString());
-
-    private final boolean handleDeckSwaps;
-
-    public ThreeBattlerAssessor() {
-        this(true);
-    }
-
-    public ThreeBattlerAssessor(boolean handleDeckSwaps) {
-        this.handleDeckSwaps = handleDeckSwaps;
-    }
 
     @Override
     public BattleCard pickWinner(Battle battle) {
@@ -40,19 +30,14 @@ public class ThreeBattlerAssessor implements BattleAssessor {
         /* J8 combo means that the players immediately swap decks. Multiple
          * swaps can occur. XXX - verify the correctness of this
          */
-        if (handleDeckSwaps) {
-            if (isJackEightCombo(one, two)) {
-                one.getPlayedBy().swapHands(two.getPlayedBy());
-                log.info(one + " swapped hands with " + two);
-            }
-            if (isJackEightCombo(one, three)) {
-                one.getPlayedBy().swapHands(three.getPlayedBy());
-                log.info(one + " swapped hands with " + three);
-            }
-            if (isJackEightCombo(two, three)) {
-                two.getPlayedBy().swapHands(three.getPlayedBy());
-                log.info(two + " swapped hands with " + three);
-            }
+        if (isJackEightCombo(one, two)) {
+            battle.getGame().swapHands(one.getPlayedBy(), two.getPlayedBy());
+        }
+        if (isJackEightCombo(one, three)) {
+            battle.getGame().swapHands(one.getPlayedBy(), three.getPlayedBy());
+        }
+        if (isJackEightCombo(two, three)) {
+            battle.getGame().swapHands(two.getPlayedBy(), three.getPlayedBy());
         }
 
         /*
@@ -61,7 +46,7 @@ public class ThreeBattlerAssessor implements BattleAssessor {
         if (isBattleRoyale(one, two) || isBattleRoyale(one, three) || isBattleRoyale(two, three)) {
             return null;
         }
-        
+
         /*
          * Determine value difference between three players. If any combination is
          * under the battle threshold, there is no winner.
@@ -73,7 +58,7 @@ public class ThreeBattlerAssessor implements BattleAssessor {
                 || isDifferentialUnderBattleThreshold(oneThreeDiff)
                 || isDifferentialUnderBattleThreshold(twoThreeDiff)) {
             return null;
-        } 
+        }
         BattleCard highCard = highCard(one, two, three);
         /*
          * If an Ace is the high card, check for a two. In an Ace-Two combo, the Two wins.
@@ -113,7 +98,7 @@ public class ThreeBattlerAssessor implements BattleAssessor {
             }
             return result;
         }
-        
+
         int oneTwoFee = MAX_VALUE_DIFF_FEE - Math.abs(one.computeValueDifference(two));
         int oneThreeFee = MAX_VALUE_DIFF_FEE - Math.abs(one.computeValueDifference(three));
         int twoThreeFee = MAX_VALUE_DIFF_FEE - Math.abs(two.computeValueDifference(three));
@@ -128,7 +113,7 @@ public class ThreeBattlerAssessor implements BattleAssessor {
         }
         return result;
     }
-    
+
     private static void checkBattlers(List<Player> battlers) {
         Preconditions.checkState(battlers.size() == 3);
     }

@@ -9,12 +9,8 @@ public class DefaultBattleAccessor implements BattleAssessor {
     private final ThreeBattlerAssessor threeBattlerAssessor;
 
     public DefaultBattleAccessor() {
-        this(true);
-    }
-
-    public DefaultBattleAccessor(boolean handleDeckSwaps) {
-        twoBattlerAssessor = new TwoBattlerAssessor(handleDeckSwaps);
-        threeBattlerAssessor = new ThreeBattlerAssessor(handleDeckSwaps);
+        twoBattlerAssessor = new TwoBattlerAssessor();
+        threeBattlerAssessor = new ThreeBattlerAssessor();
     }
 
     @Override

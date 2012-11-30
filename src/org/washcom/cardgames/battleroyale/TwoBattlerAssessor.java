@@ -19,16 +19,6 @@ public class TwoBattlerAssessor implements BattleAssessor {
     
     private static final Logger log = Logger.getLogger(TwoBattlerAssessor.class.toString());
     
-    private final boolean handleDeckSwaps;
-
-    public TwoBattlerAssessor() {
-        this(true);
-    }
-    
-    public TwoBattlerAssessor(boolean handleDeckSwaps) {
-        this.handleDeckSwaps = handleDeckSwaps;
-    }
-    
     public static final Map<Denomination, Integer> battleRoyaleFees = new HashMap<Denomination, Integer>() {
         {
             put(Denomination.ACE, 4);
@@ -46,9 +36,8 @@ public class TwoBattlerAssessor implements BattleAssessor {
         BattleCard two = cards.get(1);
         
         /* J8 combo means that the players immediately swap decks. */
-        if (handleDeckSwaps && isJackEightCombo(one, two)) {
-            log.info(one + " swapped hands with " + two);
-            one.getPlayedBy().swapHands(two.getPlayedBy());
+        if (isJackEightCombo(one, two)) {
+            battle.getGame().swapHands(one.getPlayedBy(), two.getPlayedBy());
         }
         
         /*

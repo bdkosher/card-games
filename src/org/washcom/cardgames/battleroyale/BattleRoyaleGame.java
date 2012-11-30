@@ -1,42 +1,51 @@
 package org.washcom.cardgames.battleroyale;
 
+import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 import org.washcom.cardgames.core.Deck;
 import org.washcom.cardgames.core.DeckDealer;
 
 /**
- * The game class maintains the state of the game. - the players - the current round - game cards (not belonging to any particular
- * player)
+ * The game class maintains the state of the game. - the players - the current
+ * round - game cards (not belonging to any particular player)
  *
- * The game class also contains methods to move state, namely, to start a new round.
+ * The game class also contains methods to move state, namely, to start a new
+ * round.
  *
  * @author Joe
  */
 public class BattleRoyaleGame {
 
+    private static final Logger log = Logger.getLogger(BattleRoyaleGame.class.toString());
     private static final int MINIMUM_NUMBER_OF_PLAYERS = 2;
     private static final boolean LEFTOVER_CARDS_FROM_DEAL_GO_INTO_GAMEPOT = true;
     private final BattleAssessor assessor;
-        
     private List<Player> players;
     private Deck gameCards;
     private int currentRoundNumber = 0;
     private Battle currentBattle;
     private Player winner = null;
+    private boolean swapHandsRuleEnabled = true;
+    //private boolean threeCardBattleRuleEnabled = true;
+    private int swappedHandsCount = 0;
+    private int unresolvedBattleCount = 0;
 
     /**
-     * Initializes a new game. The game is not started until {@code start} is called. The provided listener is responsible for
-     * driving the state of the game.
+     * Initializes a new game. The game is not started until {@code start} is
+     * called. The provided listener is responsible for driving the state of the
+     * game.
      */
     public BattleRoyaleGame() {
         this(new DefaultBattleAccessor());
     }
-    
+
     /**
-     * Initializes a new game. The game is not started until {@code start} is called. The provided listener is responsible for
-     * driving the state of the game.
+     * Initializes a new game. The game is not started until {@code start} is
+     * called. The provided listener is responsible for driving the state of the
+     * game.
      */
     public BattleRoyaleGame(BattleAssessor assessor) {
         if (assessor == null) {
@@ -46,15 +55,9 @@ public class BattleRoyaleGame {
     }
 
     private void initializeGame(Deck deck, Player... players) {
-        if (deck == null) {
-            throw new IllegalArgumentException("Deck cannot be null.");
-        }
-        if (players == null || players.length < MINIMUM_NUMBER_OF_PLAYERS) { // TODO: set 2 in config.
-            throw new IllegalArgumentException("Must have at least two players.");
-        }
-        if (deck.size() < MINIMUM_NUMBER_OF_PLAYERS) {
-            throw new IllegalArgumentException("Must have at least as many cards as minimum players.");
-        }
+        Preconditions.checkNotNull(deck);
+        Preconditions.checkArgument(players != null && players.length >= MINIMUM_NUMBER_OF_PLAYERS);
+        Preconditions.checkArgument(deck.size() >= MINIMUM_NUMBER_OF_PLAYERS);
         this.players = Arrays.asList(players);
         this.gameCards = deck;
         if (LEFTOVER_CARDS_FROM_DEAL_GO_INTO_GAMEPOT) {
@@ -76,7 +79,11 @@ public class BattleRoyaleGame {
          * Battle as long as there are two or more players in the game.
          */
         while (getActivePlayers().size() > 1) {
-            battle();
+            try {
+                battle();
+            } catch (IllegalStateException e) {
+                log.info("Uh-oh, no winner: " + e.getLocalizedMessage());
+            }
         }
 
         /*
@@ -92,6 +99,17 @@ public class BattleRoyaleGame {
     void battle() {
         currentBattle = new Battle(++currentRoundNumber, this);
         currentBattle.fight(assessor);
+    }
+
+    /**
+     * Swaps hands between players, provided the swap hands rule is enabled.
+     */
+    void swapHands(Player one, Player other) {
+        if (swapHandsRuleEnabled) {
+            one.swapHands(other);
+            log.info(one + " swapped hands with " + other);
+            ++swappedHandsCount;
+        }
     }
 
     /**
@@ -129,7 +147,8 @@ public class BattleRoyaleGame {
     }
 
     /**
-     * Returns the winner of the game. If the game hasn't finished, this method will return null.
+     * Returns the winner of the game. If the game hasn't finished, this method
+     * will return null.
      */
     public Player getWinner() {
         return winner;
@@ -141,4 +160,24 @@ public class BattleRoyaleGame {
     public int getRoundsPlayed() {
         return currentRoundNumber;
     }
+
+    /**
+     * Returns the number of times hands were swapped.
+     */
+    public int getSwappedHandsCount() {
+        return swappedHandsCount;
+    }
+
+    /**
+     * Returns the number of battles that had no winner after the max number
+     * of continuations had occurred.
+     */
+    public int getUnresolvedBattleCount() {
+        return unresolvedBattleCount;
+    }
+    
+    void incrementUnresolvedBattleCount() {
+        ++unresolvedBattleCount;
+    }
+
 }

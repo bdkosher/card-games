@@ -1,5 +1,6 @@
 package org.washcom.cardgames.battleroyale;
 
+import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -28,12 +29,8 @@ public class Battle {
      * @param game
      */
     public Battle(int number, BattleRoyaleGame game) {
-        if (game == null) {
-            throw new IllegalArgumentException("Game arg cannot be null.");
-        }
-        if (number < 1) {
-            throw new IllegalArgumentException("Round number must be greater than 0");
-        }
+        Preconditions.checkNotNull(game);
+        Preconditions.checkArgument(number > 0);
         this.number = number;
         this.game = game;
     }
@@ -88,7 +85,7 @@ public class Battle {
             playBattleCards();
             BattleCard winner = assessor.pickWinner(this);
             Map<Player, Integer> fees = assessor.determineFees(this);
-            
+
             addBattleCardsToGamePot();
             if (winner != null) {
                 spoilsToTheVictor(winner.getPlayedBy());
@@ -112,9 +109,11 @@ public class Battle {
         // unresolved battle, so inactive player gets the spoils
         if (nonBattler == null) {
             throw new IllegalStateException("Man...unresolved three-way-battle");
+        } else {
+            log.info("Unresolved battle, spoils go to the non-battling battler, " + nonBattler);
+            spoilsToTheVictor(nonBattler);
+            game.incrementUnresolvedBattleCount();
         }
-        log.info("Unresolved battle, spoils go to the non-battling battler, " + nonBattler);
-        spoilsToTheVictor(nonBattler);
     }
 
     /**
