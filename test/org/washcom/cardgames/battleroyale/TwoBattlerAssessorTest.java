@@ -1,6 +1,7 @@
 package org.washcom.cardgames.battleroyale;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import static org.junit.Assert.*;
@@ -37,6 +38,11 @@ public class TwoBattlerAssessorTest {
                 cards.add(bc(denom2, 2));
                 return cards;
             }
+
+            @Override
+            public List<Player> getBattlers() {
+                return Arrays.<Player>asList(player(1), player(2));
+            }
             
         };
     }
@@ -65,6 +71,20 @@ public class TwoBattlerAssessorTest {
     @Test
     public void testPlayerOneWinsWithTwoOverAce() {
         assertEquals(player(1), assessor.pickWinner(battle(TWO, ACE)).getPlayedBy());
+        assertEquals(player(2), assessor.pickWinner(battle(ACE, TWO)).getPlayedBy());
+    }
+    
+    @Test
+    public void testBattleRoyaleCombosResultInNoWinner() {
+        assertNull(assessor.pickWinner(battle(JACK, JACK)));
+        assertNull(assessor.pickWinner(battle(QUEEN, JACK)));
+        assertNull(assessor.pickWinner(battle(KING, JACK)));
+        assertNull(assessor.pickWinner(battle(JACK, QUEEN)));
+        assertNull(assessor.pickWinner(battle(QUEEN, QUEEN)));
+        assertNull(assessor.pickWinner(battle(KING, QUEEN)));
+        assertNull(assessor.pickWinner(battle(JACK, KING)));
+        assertNull(assessor.pickWinner(battle(QUEEN, KING)));
+        assertNull(assessor.pickWinner(battle(KING, KING)));
     }
     
 }
