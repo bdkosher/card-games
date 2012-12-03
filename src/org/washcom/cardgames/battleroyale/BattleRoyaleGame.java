@@ -3,7 +3,9 @@ package org.washcom.cardgames.battleroyale;
 import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 import org.washcom.cardgames.core.Deck;
 import org.washcom.cardgames.core.DeckDealer;
@@ -32,6 +34,13 @@ public class BattleRoyaleGame {
     //private boolean threeCardBattleRuleEnabled = true;
     private int swappedHandsCount = 0;
     private int unresolvedBattleCount = 0;
+    /**
+     * Maps a number of continuations (0 = decided on the first playing of battle
+     * cards, through 3 = the last continuation) to the number of battles that
+     * concluded with that many continuations. Unresolved battles are captured
+     * in a separate variable, {@code unresolvedBattleCount}
+     */
+    private Map<Integer, Integer> battlesByNbrOfContinuations = new HashMap<>();
 
     /**
      * Initializes a new game. The game is not started until {@code start} is
@@ -81,7 +90,7 @@ public class BattleRoyaleGame {
         while (getActivePlayers().size() > 1) {
             try {
                 battle();
-            } catch (IllegalStateException e) {
+            } catch (UnresolvedThreeWayBattleException e) {
                 log.info("Uh-oh, no winner: " + e.getLocalizedMessage());
             }
         }
@@ -166,6 +175,22 @@ public class BattleRoyaleGame {
      */
     public int getSwappedHandsCount() {
         return swappedHandsCount;
+    }
+    
+    /**
+     * Returns a count of battles according to their length, 0 meaning they were
+     * won decisively upon the first play, 3 meaning a winner was not decided
+     * until the bitter end.
+     * @param continations - a number between 0 and 3, inclusive
+     */
+    public int getNbrOfBattlesByLength(int continuations) {
+        Preconditions.checkArgument(continuations >= 0 && continuations <= Battle.MAXIMUM_BATTLE_CONTINUATIONS);
+        return battlesByNbrOfContinuations.get(continuations);
+    }
+    
+    void incrementNbrOfBattlesByLength(int continuations) {
+        Integer count = battlesByNbrOfContinuations.get(continuations);
+        battlesByNbrOfContinuations.put(continuations, count == null ? 1 : count + 1);
     }
 
     /**
