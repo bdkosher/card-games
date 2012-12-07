@@ -21,7 +21,8 @@ public interface BattleAssessor {
 
     /**
      * Returns a mapping of Players to the number of cards they must pay as fees in order to continue the battle. Battlers who
-     * are not eligible to continue battle should not be present in the map.
+     * are not eligible to continue battle or battlers that have won may be present in the map. Clients of a BattleAssessor
+     * assume the responsibility of knowing when players are not eligible to continue or are victorious.
      * 
      * Implementations may presume that the battle has no definitive winner and need not check that there is a winner first.
      * 
