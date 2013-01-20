@@ -156,7 +156,11 @@ public class BattleRoyaleGameSimulator {
     }
     
     public static void main(String[] args) {
-        BattleRoyaleGameSimulator simulator = new BattleRoyaleGameSimulator(10);
+        int numGames = 10;
+        if (args.length > 0) {
+            numGames = Integer.parseInt(args[0]);
+        }
+        BattleRoyaleGameSimulator simulator = new BattleRoyaleGameSimulator(numGames);
         log.info("Total games played: " + simulator.getTotalGamesPlayed());
         log.info("Shortest game length: " + simulator.getShortestGameLength());
         log.info("Longest game length: " + simulator.getLongestGameLength());

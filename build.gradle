@@ -45,3 +45,12 @@ def findJavaHome() {
     javaHome = javaHome - '/jre' - '\\jre'
     return javaHome
 }
+
+task(battle, dependsOn: 'classes', type: JavaExec) {
+    main = 'org.washcom.cardgames.battleroyale.BattleRoyaleGameSimulator'
+    classpath = sourceSets.main.runtimeClasspath
+    args '20'
+    systemProperty 'key', 'value'
+}
+ 
+defaultTasks 'battle'
