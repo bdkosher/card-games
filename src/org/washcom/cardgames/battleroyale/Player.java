@@ -11,9 +11,18 @@ public class Player extends org.washcom.cardgames.core.Player {
     private boolean participatingInBattle = true;
     private int nbrOfBattlesFought = 0;
     private int nbrOfBattlesWon = 0;
-
+    private SecondChanceStrategy strategy = null;
+    
     public Player(String name) {
         super(name);
+    }
+    
+    public SecondChanceStrategy getSecondChanceStrategy() {
+        return strategy;
+    }
+    
+    public void setSecondChanceStrategy(SecondChanceStrategy strat) {
+        this.strategy = strat;
     }
 
     public boolean isParticipatingInBattle() {

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 import org.washcom.cardgames.core.Card;
+import org.washcom.cardgames.core.Denomination;
 
 /**
  * A battle is ambiguously both a) the name for a round and b) the name for a
@@ -162,8 +163,32 @@ public class Battle {
             battleCards.add(new BattleCard(card, battler));
             log.info("\t" + battler + " played a " + card);
         }
+        
+        boolean tookChance = checkForSecondChances();
+        while (tookChance) {    //could run more times if person keeps plays another three
+            tookChance = checkForSecondChances();
+        }
     }
-
+    
+    private boolean checkForSecondChances() {
+        boolean tookSecondChance = false;
+        //Look for 3s, which gives the player an opportunity for a second chance
+        for (int i = 0; i < battleCards.size(); i++) {
+            BattleCard card = battleCards.get(i);
+            if (card.getCard().getDenomination() == Denomination.THREE) {
+                if (card.getPlayedBy().handHasAtLeast(1)) { //make sure they have a card left to burn
+                    List<BattleCard> subList = new ArrayList<>(battleCards);
+                    subList.remove(card);
+                    if (card.getPlayedBy().getSecondChanceStrategy().shouldTryForAnotherCard(card, subList)) {
+                        BattleCard newCard = this.getGame().burnAThreeAndPlayAnother(card);
+                        tookSecondChance = true;
+                    }
+                }
+            }
+        }
+        return tookSecondChance;
+    }
+    
     private void spoilsToTheVictor(Player victor) {
         log.info("Giving spoils of " + game.getGameCards().size() + " cards to " + victor);
         /* shuffling necessary in war to prevent endless fighting, perhaps necessary here, too? */
