@@ -1,7 +1,7 @@
 package org.washcom.cardgames.battleroyale;
 
-import com.google.common.base.Preconditions;
 import org.washcom.cardgames.core.Card;
+
 import static org.washcom.cardgames.core.Denomination.ACE;
 import static org.washcom.cardgames.core.Denomination.KING;
 
@@ -17,8 +17,12 @@ public class BattleCard {
     private final Player playedBy;
 
     public BattleCard(Card card, Player playedBy) {
-        Preconditions.checkNotNull(card);
-        Preconditions.checkNotNull(playedBy);
+        if (card == null) {
+            throw new IllegalArgumentException("Card cannot be null.");
+        }
+        if (playedBy == null) {
+            throw new IllegalArgumentException("Player cannot be null.");
+        }
         this.card = card;
         this.playedBy = playedBy;
     }
@@ -42,9 +46,13 @@ public class BattleCard {
      * Computes the difference between denominations. Aces counted as high.
      * If this card is worth more than the other card, a positive integer is returned; if not, a
      * negative will be returned.
+     * 
+     * @param other
      */
     public int computeValueDifference(BattleCard other) {
-        Preconditions.checkNotNull(other);
+        if (other == null) {
+            throw new IllegalArgumentException("Other BattleCard cannot be null.");
+        }
         int value = card.getDenomination() == ACE 
                 ? ACE_VALUE : card.getDenomination().getValue();
         int otherValue = other.card.getDenomination() == ACE 
