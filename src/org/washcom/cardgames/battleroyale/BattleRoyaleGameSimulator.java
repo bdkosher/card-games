@@ -26,20 +26,6 @@ public class BattleRoyaleGameSimulator {
     private final List<Integer> unresolvedBattlesPerGame = new ArrayList<>();
 
     public BattleRoyaleGameSimulator(int nbrOfGames) {
-        player1.setSecondChanceStrategy(new SecondChanceStrategy() {
-            
-            @Override
-            public boolean shouldTryForAnotherCard(BattleCard three, List<BattleCard> opponent) {
-                return false;
-            }
-        });
-        player3.setSecondChanceStrategy(new SecondChanceStrategy() {
-            
-            @Override
-            public boolean shouldTryForAnotherCard(BattleCard three, List<BattleCard> opponent) {
-                return false;
-            }
-        });
         player2.setSecondChanceStrategy(new OptimalSecondChanceStrategy());
         for (int i = 0; i < nbrOfGames; ++i) {
             BattleRoyaleGame game = new BattleRoyaleGame();

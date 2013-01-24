@@ -1,5 +1,7 @@
 package org.washcom.cardgames.battleroyale;
 
+import java.util.List;
+
 import org.washcom.cardgames.core.Deck;
 
 /**
@@ -18,6 +20,15 @@ public class Player extends org.washcom.cardgames.core.Player {
     }
     
     public SecondChanceStrategy getSecondChanceStrategy() {
+        if (strategy == null) {
+            strategy = new SecondChanceStrategy() {
+                
+                @Override
+                public boolean shouldTryForAnotherCard(BattleCard three, List<BattleCard> opponents) {
+                    return false;
+                }
+            };
+        }
         return strategy;
     }
     
