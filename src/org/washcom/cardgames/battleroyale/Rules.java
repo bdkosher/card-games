@@ -82,6 +82,12 @@ public class Rules {
         return isDenominationCombo(one, two, JACK, EIGHT);
     }
     
+    public static boolean isLosingCardAThree(BattleCard one, BattleCard two) {
+        return one.getCard().getDenomination() != two.getCard().getDenomination()
+                && ((one.getCard().getDenomination() == Denomination.THREE && two.getCard().getDenomination() != Denomination.TWO)
+                || (two.getCard().getDenomination() == Denomination.THREE && one.getCard().getDenomination() != Denomination.TWO));
+    }
+    
     public static BattleCard highCard(BattleCard one, BattleCard two) {
         int diff = one.computeValueDifference(two);
         return diff > 0 ? one : two;

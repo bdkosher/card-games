@@ -63,7 +63,7 @@ public class TwoBattlerAssessor implements BattleAssessor {
         
         return diff > 0 ? one : two;
     }
-    
+
     @Override
     public Map<Player, Integer> determineFees(Battle battle) {
         checkBattlers(battle.getBattlers());

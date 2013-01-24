@@ -34,6 +34,7 @@ public class BattleRoyaleGame {
     //private boolean threeCardBattleRuleEnabled = true;
     private int swappedHandsCount = 0;
     private int unresolvedBattleCount = 0;
+    
     /**
      * Maps a number of continuations (0 = decided on the first playing of battle
      * cards, through 3 = the last continuation) to the number of battles that
@@ -74,6 +75,7 @@ public class BattleRoyaleGame {
         } else {
             DeckDealer.dealEntirely(this.gameCards, players);
         }
+
     }
 
     /**
@@ -119,6 +121,17 @@ public class BattleRoyaleGame {
             log.info(one + " swapped hands with " + other);
             ++swappedHandsCount;
         }
+    }
+    
+    BattleCard burnAThreeAndPlayAnother(BattleCard toBurn) {
+        //burn
+        getGameCards().put(toBurn.getCard());
+        
+        //redraw another card
+        BattleCard newCard = new BattleCard(toBurn.getPlayedBy().getHand().draw(), toBurn.getPlayedBy());
+        getCurrentBattle().getBattleCards().set(getCurrentBattle().getBattleCards().indexOf(toBurn), newCard);
+        log.info(newCard.getPlayedBy() + " is burning a 3 and drawing a "+ newCard.getCard());
+        return newCard;
     }
 
     /**

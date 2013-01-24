@@ -26,6 +26,21 @@ public class BattleRoyaleGameSimulator {
     private final List<Integer> unresolvedBattlesPerGame = new ArrayList<>();
 
     public BattleRoyaleGameSimulator(int nbrOfGames) {
+        player1.setSecondChanceStrategy(new SecondChanceStrategy() {
+            
+            @Override
+            public boolean shouldTryForAnotherCard(BattleCard three, List<BattleCard> opponent) {
+                return false;
+            }
+        });
+        player3.setSecondChanceStrategy(new SecondChanceStrategy() {
+            
+            @Override
+            public boolean shouldTryForAnotherCard(BattleCard three, List<BattleCard> opponent) {
+                return false;
+            }
+        });
+        player2.setSecondChanceStrategy(new OptimalSecondChanceStrategy());
         for (int i = 0; i < nbrOfGames; ++i) {
             BattleRoyaleGame game = new BattleRoyaleGame();
             game.play(DeckBuilder.buildShuffled52CardDeck(), player1, player2, player3);
@@ -122,7 +137,7 @@ public class BattleRoyaleGameSimulator {
             diffSqsSum += diffSq;
         }
         return new BigDecimal(diffSqsSum).divide(new BigDecimal(deckSwapsPerGame.size())).doubleValue();
-    }
+    }  
 
     public List<Integer> getUnresolvedBattlesPerGame() {
         return unresolvedBattlesPerGame;
@@ -156,7 +171,11 @@ public class BattleRoyaleGameSimulator {
     }
     
     public static void main(String[] args) {
-        BattleRoyaleGameSimulator simulator = new BattleRoyaleGameSimulator(10);
+        int numGames = 10;
+        if (args.length > 0) {
+            numGames = Integer.parseInt(args[0]);
+        }
+        BattleRoyaleGameSimulator simulator = new BattleRoyaleGameSimulator(numGames);
         log.info("Total games played: " + simulator.getTotalGamesPlayed());
         log.info("Shortest game length: " + simulator.getShortestGameLength());
         log.info("Longest game length: " + simulator.getLongestGameLength());
