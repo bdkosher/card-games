@@ -105,13 +105,13 @@ public class Battle {
                 log.info("Fighting battle " + number);
             }
 
-            addBattleCardsToGamePot();
             if (winner != null) {
                 spoilsToTheVictor(winner.getPlayedBy());
                 game.incrementNbrOfBattlesByLength(continuations);
                 return;
             }
             
+            addBattleCardsToGamePot();
             eliminateCardlessBattlers();
             if (battlers.size() == 1) {
                 spoilsToTheVictor(battlers.get(0));
